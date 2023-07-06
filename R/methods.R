@@ -1,10 +1,10 @@
 ProcFile <- function(raw_dt) {
     setnames(raw_dt,
              c("seqnames", 
-               "start", 
-               "end", 
                "CI.start", 
                "CI.end",
+               "start", 
+               "end", 
                "genoT"
                ),
              c("chrom",
@@ -19,7 +19,10 @@ ProcFile <- function(raw_dt) {
     raw_dt[, `:=`(geno1 = strsplit(strand_state, "-")[[1]][1],
                   geno2 = strsplit(strand_state, "-")[[1]][2])]
 
-    raw_dt[, cell_name := tstrsplit(filenames, "\\.", keep = 1)]
+    raw_dt[, cell_name := substr(filenames,
+                                 start = 0,
+                                 stop = 10)]
+    #     raw_dt[, cell_name := tstrsplit(filenames, "\\.", keep = 1)]
 
     setcolorder(raw_dt,
                 c("chrom",
