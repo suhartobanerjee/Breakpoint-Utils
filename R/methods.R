@@ -19,6 +19,9 @@ ProcFile <- function(raw_dt) {
     raw_dt[, `:=`(geno1 = strsplit(strand_state, "-")[[1]][1],
                   geno2 = strsplit(strand_state, "-")[[1]][2])]
 
+    raw_dt[, sample := substr(filenames,
+                                 start = 0,
+                                 stop = 5)]
     raw_dt[, cell_name := substr(filenames,
                                  start = 0,
                                  stop = 10)]
@@ -32,6 +35,7 @@ ProcFile <- function(raw_dt) {
                   "small_end",
                   "geno1",
                   "geno2",
+                  "sample",
                   "cell_name")
     )
 
