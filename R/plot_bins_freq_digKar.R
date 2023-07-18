@@ -16,7 +16,7 @@ raw_dt
 
 
 # binning genome
-bin_size = 10e6
+bin_size = 1e6
 ret_list <- BinGenome(bin_size = bin_size)
 bin_genome <- ret_list[["bin_genome"]]
 bin_gen_dt <- ret_list[["bin_gen_dt"]]
@@ -122,6 +122,10 @@ str(big_freq_ncells_verbose)
 
 
 big_freq_ncells_verbose
+big_freq_ncells_verbose[chrom == "chr21",
+                        max(end_loc)]
+ideo_dt[chrom == "chr21",
+        max(end_loc)]
 
 
 
@@ -129,56 +133,56 @@ big_freq_ncells_verbose
 
 
 # trying out line plot with freq
-tmp_plot <- "../plots/tmp/tmp_plot.pdf"
-
-freq_plot <- ggplot(data = big_freq_ncells_verbose[chrom == "chr1"],
-                    aes(xmin = start_loc,
-                        xmax = end_loc,
-                        ymin = ymin,
-                        ymax = freq)
-                    ) +
-                                 geom_rect() +
-                                 coord_fixed(ratio = 300000,
-                                             xlim = CHR_PROP_XLIM_H2) +
-                                 facet_grid(rows = vars(chrom), switch = "y") +
-                                 theme_dig_kar
-
-freq_plot2 <- ggplot(data = big_freq_ncells_verbose[chrom == "chr2"],
-                    aes(xmin = start_loc,
-                        xmax = end_loc,
-                        ymin = ymin,
-                        ymax = freq)
-                    ) +
-                                 geom_rect() +
-                                 coord_fixed(ratio = 300000,
-                                             xlim = CHR_PROP_XLIM_H2) +
-                                 facet_grid(rows = vars(chrom), switch = "y") +
-                                 theme_dig_kar
-
-freq_plot3 <- ggplot(data = big_freq_ncells_verbose[chrom == "chr3"],
-                    aes(xmin = start_loc,
-                        xmax = end_loc,
-                        ymin = ymin,
-                        ymax = freq)
-                    ) +
-                                 geom_rect() +
-                                 coord_fixed(ratio = 300000,
-                                             xlim = CHR_PROP_XLIM_H2) +
-                                 facet_grid(rows = vars(chrom), switch = "y") +
-                                 theme_dig_kar
-
-freq_plot4 <- ggplot(data = big_freq_ncells_verbose[chrom == "chr4"],
-                    aes(xmin = start_loc,
-                        xmax = end_loc,
-                        ymin = ymin,
-                        ymax = freq)
-                    ) +
-                                 geom_rect() +
-                                 coord_fixed(ratio = 300000,
-                                             xlim = CHR_PROP_XLIM_H2) +
-                                 facet_grid(rows = vars(chrom), switch = "y") +
-                                 theme_dig_kar
-ggsave("../plots/digKar_bins_freq/freq_plot.pdf")
+# tmp_plot <- "../plots/tmp/tmp_plot.pdf"
+# 
+# freq_plot <- ggplot(data = big_freq_ncells_verbose[chrom == "chr1"],
+#                     aes(xmin = start_loc,
+#                         xmax = end_loc,
+#                         ymin = ymin,
+#                         ymax = freq)
+#                     ) +
+#                                  geom_rect() +
+#                                  coord_fixed(ratio = 300000,
+#                                              xlim = CHR_PROP_XLIM_H2) +
+#                                  facet_grid(rows = vars(chrom), switch = "y") +
+#                                  theme_dig_kar
+# 
+# freq_plot2 <- ggplot(data = big_freq_ncells_verbose[chrom == "chr2"],
+#                     aes(xmin = start_loc,
+#                         xmax = end_loc,
+#                         ymin = ymin,
+#                         ymax = freq)
+#                     ) +
+#                                  geom_rect() +
+#                                  coord_fixed(ratio = 300000,
+#                                              xlim = CHR_PROP_XLIM_H2) +
+#                                  facet_grid(rows = vars(chrom), switch = "y") +
+#                                  theme_dig_kar
+# 
+# freq_plot3 <- ggplot(data = big_freq_ncells_verbose[chrom == "chr3"],
+#                     aes(xmin = start_loc,
+#                         xmax = end_loc,
+#                         ymin = ymin,
+#                         ymax = freq)
+#                     ) +
+#                                  geom_rect() +
+#                                  coord_fixed(ratio = 300000,
+#                                              xlim = CHR_PROP_XLIM_H2) +
+#                                  facet_grid(rows = vars(chrom), switch = "y") +
+#                                  theme_dig_kar
+# 
+# freq_plot4 <- ggplot(data = big_freq_ncells_verbose[chrom == "chr4"],
+#                     aes(xmin = start_loc,
+#                         xmax = end_loc,
+#                         ymin = ymin,
+#                         ymax = freq)
+#                     ) +
+#                                  geom_rect() +
+#                                  coord_fixed(ratio = 300000,
+#                                              xlim = CHR_PROP_XLIM_H2) +
+#                                  facet_grid(rows = vars(chrom), switch = "y") +
+#                                  theme_dig_kar
+# ggsave("../plots/digKar_bins_freq/freq_plot.pdf")
 
 
 
@@ -189,76 +193,109 @@ centro_dt <- Proc_Centro_Trapezium(centro_dt)
 centro_dt
 
 
+dig_kar_h2 <- generate_skeleton_h2(ideo_dt[chrom %in% all_chr[10:14]])
 dig_kar_h2 <- generate_skeleton_h2(ideo_dt)
 dig_kar_h2 <- add_centromere(dig_kar = dig_kar_h2,
                              centro_dt = centro_dt)
-
-comb <- c()
-
-comb <- plot_grid(,
-                  freq_plot,
-                  dig_kar_h2[["chr1"]],
-                  ncol = 1,
-                  align = "v",
-                  axis = "r"
-)
-
-comb <- plot_grid(comb,
-                  freq_plot2,
-                  dig_kar_h2[["chr2"]],
-                  ncol = 1,
-                  align = "v",
-                  axis = "r"
-)
-
-comb <- plot_grid(comb,
-                  freq_plot3,
-                  dig_kar_h2[["chr3"]],
-                  ncol = 1,
-                  align = "v",
-                  axis = "r"
-)
-
-comb <- plot_grid(comb,
-                  freq_plot4,
-                  dig_kar_h2[["chr4"]],
-                  ncol = 1,
-                  align = "v",
-                  axis = "r"
-)
-save_digital_karyotype(comb,
+dig_kar <- stitch_skeleton_h2(dig_kar_h2)
+save_digital_karyotype(dig_kar,
                        save_dir = "digKar_bins_freq",
-                       cell_name = "chr_freq"
+                       cell_name = "ideo"
 )
 
-ggsave("../plots/digKar_bins_freq/chr_freq.pdf")
-
+# comb <- c()
+# 
+# comb <- plot_grid(comb,
+#                   freq_plot,
+#                   dig_kar_h2[["chr1"]],
+#                   ncol = 1,
+#                   align = "v",
+#                   axis = "l"
+# )
+# 
+# comb <- plot_grid(comb,
+#                   freq_plot2,
+#                   dig_kar_h2[["chr2"]],
+#                   ncol = 1,
+#                   align = "v",
+#                   axis = "l"
+# )
+# 
+# comb <- plot_grid(comb,
+#                   freq_plot3,
+#                   dig_kar_h2[["chr3"]],
+#                   ncol = 1,
+#                   align = "v",
+#                   axis = "l"
+# )
+# 
+# comb <- plot_grid(comb,
+#                   freq_plot4,
+#                   dig_kar_h2[["chr4"]],
+#                   ncol = 1,
+#                   align = "v",
+#                   axis = "l"
+# )
+# save_digital_karyotype(comb,
+#                        save_dir = "digKar_bins_freq",
+#                        cell_name = "chr_freq"
+# )
+# 
+# ggsave("../plots/digKar_bins_freq/chr_freq.pdf")
+# 
 
 
 ################################################################################
 Plot_Frequency <- function(freq_dt) {
 
-    tmp <- c()
+    freq_counter <- 1
+    dig_kar_counter <- 2
     freq_plot_list <- c()
     for (chr in seq_along(all_chr)) {
 
-        print(chr)
-        tmp <- ggplot(data = freq_dt[chrom == all_chr[chr]],
-                            aes(xmin = start_loc,
+        freq_plot_list[[freq_counter]] <- ggplot() +
+                       geom_rect(data = freq_dt[chrom == all_chr[chr]],
+                            aes(ymin = KAR_YMIN,
+                                ymax = freq,
+                                xmin = start_loc,
                                 xmax = end_loc,
-                                ymin = ymin,
-                                ymax = freq)
-                            ) +
-                       geom_rect() +
-                       coord_fixed(ratio = 300000,
-                                   xlim = CHR_PROP_XLIM_H2) +
+                                fill = n_cells)) +
+#                        xlim(CHR_PROP_XLIM_H2) +
+#                        coord_fixed(ratio = CHR_PROP_RATIO - 1e7,
+#                                    xlim = CHR_PROP_XLIM_H2) +
                        facet_grid(rows = vars(chrom), switch = "y") +
-                       theme_dig_kar
+#                        coord_cartesian(
+#                                        ylim = c(min(freq_dt[, freq]),
+#                                                 max(freq_dt[, freq])),
+#                                        expand = F) +
+                       scale_x_continuous(limits = CHR_PROP_XLIM_H2) +
+                       scale_y_continuous(limits = c(min(freq_dt[, freq]),
+                                                     max(freq_dt[, freq])),
+                                          breaks = seq(min(freq_dt[, freq]),
+                                                       max(freq_dt[, freq]),
+                                                       by = 20)) +
+                       scale_fill_gradientn(colors = hsv(1, seq(0, 1, length.out = length(unique(freq_dt$n_cells))), 1),
+                                            limits = c(min(freq_dt$n_cells), max(freq_dt$n_cells)),
+                                            breaks = c(seq(min(freq_dt[, freq]),
+                                                       max(freq_dt[, freq])))) +
+                       theme_dig_kar + 
+                       theme(plot.margin = margin(t = 0,
+                                                  r = 0,
+                                                  b = 0,
+                                                  l = 0,
+                                                  unit = "pt"),
+                             strip.text.y.left = element_blank(),
+                             axis.line.y.left = element_line(),
+                             axis.ticks.y = element_line(),
+                             axis.text.y.left = element_text(),
+                             legend.position = "none"
+                       )
         
-        tmp_dig_kar <- dig_kar_h2[[all_chr[chr]]]
-        freq_plot_list[[chr]] <- tmp
-        freq_plot_list[[(as.integer(chr) + 1)]] <- tmp_dig_kar
-        #         freq_plot_list[[(chr + 1)]] <- tmp
+
+        freq_plot_list[[dig_kar_counter]] <- dig_kar_h2[[all_chr[chr]]]
+
+        freq_counter <- freq_counter + 2
+        dig_kar_counter <- dig_kar_counter + 2
     }
 
 
@@ -268,53 +305,99 @@ Plot_Frequency <- function(freq_dt) {
 
 
 freq_plot_list <- Plot_Frequency(big_freq_ncells_verbose)
-dig_kar_h2[["chr1"]]
-freq_plot_list
+# dig_kar_h2[["chr1"]]
+# freq_plot_list
 
 
 
 list_plot <- plot_grid(plotlist = freq_plot_list,
           align = "v",
-          axis = "r",
-          ncol = 1
+          axis = "l",
+          ncol = 1,
+          rel_heights = rep(c(3,1), 24)
 )
 
-save_digital_karyotype(list_plot,
+comb_legend <- generate_combined_legend(combined_haplo_calls = big_freq_ncells_verbose,
+                                        fill_param = "n_cells",
+                                        legend_title = "n_cells",
+                                        gradient = T
+
+)
+
+comb_plot <- plot_grid(comb_legend,
+                       list_plot,
+                       ncol = 2,
+                       rel_widths = MASTER_PLOT_LEGEND_REL_WIDTHS_HALF,
+                       align = "hv",
+                       axis = "l"
+)
+
+# 
+save_digital_karyotype(comb_plot,
                        save_dir = "digKar_bins_freq",
                        cell_name = "list_plot"
 )
+# ggsave("../plots/digKar_bins_freq/chr_freq.pdf",
+#        width = 40,
+#        height = 40,
+#        units = "cm"
+# )
+
+
+
+
+# dig_kar <- stitch_skeleton_h2(freq_plot_list,
+#                               haplo_label = "Breakpoint Distribution")
+# save_digital_karyotype(dig_kar,
+#                        save_dir = "digKar_bins_freq",
+#                        cell_name = "list_plot_stitch"
+# )
+
+# for super large output
+save_plot(filename = "../plots/digKar_bins_freq/chr_freq_cowplot.pdf",
+          plot = dig_kar,
+          base_height = 4,
+          base_asp = 20,
+          nrow = 48,
+          limitsize = F
+)
+
+
+# ggsave("../plots/digKar_bins_freq/chr_freq.pdf",
+#        width = 40,
+#        height = 40,
+# )
 
 
 
 
 ################################################################################
-
-dig_kar_h2 <- generate_info_layer_gradient_h2(dig_kar_h2,
-                                     big_overlap_10mb,
-                                     fill_param = "freq",
-)
-dig_kar_h2 <- stitch_skeleton_h2(dig_kar_h2,
-                                 haplo_label = "Frequency of Breakpoints in 10MB bins"
-)
-
-
-# create combined legend for the cell
-combined_legend <- generate_combined_legend(combined_haplo_calls = big_overlap_10mb,
-                                            fill_param = "freq",
-                                            legend_title = "Frequency",
-                                            gradient = T
-)
-
-
-dig_kar <- plot_grid(combined_legend,
-                     dig_kar_h2,
-                     ncol = 2,
-                     rel_widths = MASTER_PLOT_LEGEND_REL_WIDTHS_HALF,
-                     align = "hv",
-                     axis = "l")
-
-
-save_digital_karyotype(dig_kar,
-                       "../plots/digKar_bins_freq",
-                       paste0("P3254", bin_size)
-)
+# dig_kar_h2 <- generate_info_layer_gradient_h2(dig_kar_h2,
+#                                      big_overlap_10mb,
+#                                      fill_param = "freq",
+# )
+# dig_kar_h2 <- stitch_skeleton_h2(dig_kar_h2,
+#                                  haplo_label = "Frequency of Breakpoints in 10MB bins"
+# )
+# 
+# 
+# # create combined legend for the cell
+# combined_legend <- generate_combined_legend(combined_haplo_calls = big_overlap_10mb,
+#                                             fill_param = "freq",
+#                                             legend_title = "Frequency",
+#                                             gradient = T
+# )
+# 
+# 
+# dig_kar <- plot_grid(combined_legend,
+#                      dig_kar_h2,
+#                      ncol = 2,
+#                      rel_widths = MASTER_PLOT_LEGEND_REL_WIDTHS_HALF,
+#                      align = "hv",
+#                      axis = "l")
+# 
+# 
+# save_digital_karyotype(dig_kar,
+#                        "../plots/digKar_bins_freq",
+#                        paste0("P3254", bin_size)
+# )
