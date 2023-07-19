@@ -11,8 +11,12 @@ source("../../digital_karyotype/R/utils.R",
 
 # raw file
 raw_dt <- fread("../proc/breakpointR_concat.tsv.gz")
+raw_dt <- raw_dt[sample == "P1530"]
+raw_dt <- raw_dt[sample == "P1467"]
 raw_dt
 
+# number of bps per cell
+raw_dt[, .N, by = cell_name]
 
 
 # binning genome
@@ -63,7 +67,6 @@ big_overlap <- PercentOverlap(bin_genome,
                               big_gro,
                               bin_size = bin_size) 
                                     
-big_overlap
 
 
 take_high_dups <- big_overlap[perc_overlap < 100,
@@ -71,6 +74,7 @@ take_high_dups <- big_overlap[perc_overlap < 100,
                              by = .(cell_name, strand_state),
                              ][, V1]
 big_overlap <- big_overlap[!take_high_dups]
+big_overlap
 
 
 
@@ -82,6 +86,8 @@ setnames(bin_freq,
 )
 bin_freq[, bin_id := as.integer(bin_id)]
 bin_freq
+
+
 
 
 
@@ -122,11 +128,13 @@ str(big_freq_ncells_verbose)
 
 
 big_freq_ncells_verbose
+big_freq_ncells_verbose[chrom == "chr3" & freq > 5]
 big_freq_ncells_verbose[chrom == "chr21",
                         max(end_loc)]
 ideo_dt[chrom == "chr21",
         max(end_loc)]
-
+big_freq_ncells_verbose[, freq / max(freq)]
+x[x > 0.8]
 
 
 
@@ -193,15 +201,15 @@ centro_dt <- Proc_Centro_Trapezium(centro_dt)
 centro_dt
 
 
-dig_kar_h2 <- generate_skeleton_h2(ideo_dt[chrom %in% all_chr[10:14]])
+# dig_kar_h2 <- generate_skeleton_h2(ideo_dt[chrom %in% all_chr[10:14]])
 dig_kar_h2 <- generate_skeleton_h2(ideo_dt)
 dig_kar_h2 <- add_centromere(dig_kar = dig_kar_h2,
                              centro_dt = centro_dt)
-dig_kar <- stitch_skeleton_h2(dig_kar_h2)
-save_digital_karyotype(dig_kar,
-                       save_dir = "digKar_bins_freq",
-                       cell_name = "ideo"
-)
+# dig_kar <- stitch_skeleton_h2(dig_kar_h2)
+# save_digital_karyotype(dig_kar,
+#                        save_dir = "digKar_bins_freq",
+#                        cell_name = "ideo"
+# )
 
 # comb <- c()
 # 
@@ -273,7 +281,7 @@ Plot_Frequency <- function(freq_dt) {
                                                      max(freq_dt[, freq])),
                                           breaks = seq(min(freq_dt[, freq]),
                                                        max(freq_dt[, freq]),
-                                                       by = 20)) +
+                                                       by = 10)) +
                        scale_fill_gradientn(colors = hsv(1, seq(0, 1, length.out = length(unique(freq_dt$n_cells))), 1),
                                             limits = c(min(freq_dt$n_cells), max(freq_dt$n_cells)),
                                             breaks = c(seq(min(freq_dt[, freq]),
@@ -310,12 +318,18 @@ freq_plot_list <- Plot_Frequency(big_freq_ncells_verbose)
 
 
 
-list_plot <- plot_grid(plotlist = freq_plot_list,
-          align = "v",
-          axis = "l",
-          ncol = 1,
-          rel_heights = rep(c(3,1), 24)
+dig_kar <- stitch_skeleton_h2(dig_kar_h2 = freq_plot_list,
+                   haplo_label = "Breakpoint Distribution: P1467",
+                   subplot_scale = rep(c(3,1), 48)
 )
+
+
+# list_plot <- plot_grid(plotlist = freq_plot_list,
+#           align = "v",
+#           axis = "l",
+#           ncol = 1,
+#           rel_heights = rep(c(3,1), 48)
+# )
 
 comb_legend <- generate_combined_legend(combined_haplo_calls = big_freq_ncells_verbose,
                                         fill_param = "n_cells",
@@ -325,7 +339,7 @@ comb_legend <- generate_combined_legend(combined_haplo_calls = big_freq_ncells_v
 )
 
 comb_plot <- plot_grid(comb_legend,
-                       list_plot,
+                       dig_kar,
                        ncol = 2,
                        rel_widths = MASTER_PLOT_LEGEND_REL_WIDTHS_HALF,
                        align = "hv",
@@ -335,7 +349,7 @@ comb_plot <- plot_grid(comb_legend,
 # 
 save_digital_karyotype(comb_plot,
                        save_dir = "digKar_bins_freq",
-                       cell_name = "list_plot"
+                       cell_name = "P1467"
 )
 # ggsave("../plots/digKar_bins_freq/chr_freq.pdf",
 #        width = 40,
