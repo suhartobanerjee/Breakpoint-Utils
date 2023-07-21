@@ -14,21 +14,24 @@ brkpnt <- dir[!(dir %in% sctrip)]
 
 sctrip_files <- data.table()
 brkpnt_files <- data.table()
-for(file in dir) {
-
-    if(file %in% sctrip) {
-
-        sctrip_files <- rbind(sctrip_files,
-                              fread(paste0("../proc/marti_files/",
-                                           file))
+for (file in dir) {
+    if (file %in% sctrip) {
+        sctrip_files <- rbind(
+            sctrip_files,
+            fread(paste0(
+                "../proc/marti_files/",
+                file
+            ))
         )
     }
 
-    if(file %in% brkpnt) {
-
-        brkpnt_files <- rbind(brkpnt_files,
-                              fread(paste0("../proc/marti_files/",
-                                           file))
+    if (file %in% brkpnt) {
+        brkpnt_files <- rbind(
+            brkpnt_files,
+            fread(paste0(
+                "../proc/marti_files/",
+                file
+            ))
         )
     }
 }
@@ -44,23 +47,25 @@ brkpnt_files[, unique(sample)]
 
 
 # adding sample col to match breakpoint R dt
-setnames(sctrip_files,
-         c("sample", "cell"),
-         c("sample_patient", "cell_name")
+setnames(
+    sctrip_files,
+    c("sample", "cell"),
+    c("sample_patient", "cell_name")
 )
 sctrip_files[, sample := substr(cell_name,
-                                start = 0,
-                                stop = 5)]
+    start = 0,
+    stop = 5
+)]
 sctrip_files
 
 
 
 fwrite(sctrip_files,
-       "../proc/sctrip_concat.tsv.gz",
-       sep = "\t"
+    "../proc/sctrip_concat.tsv.gz",
+    sep = "\t"
 )
 
 fwrite(brkpnt_files,
-       "../proc/breakpointR_concat.tsv.gz",
-       sep = "\t"
+    "../proc/breakpointR_concat.tsv.gz",
+    sep = "\t"
 )
