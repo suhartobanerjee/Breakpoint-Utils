@@ -77,7 +77,7 @@ PreProc_Data <- function(raw_dt, interval = "big") {
 
 Calculate_Freq <- function(interval_overlap_dt) {
     # calculating the number of bps in a bin
-    bin_freq <- data.table(table(big_overlap[, bin_id]))
+    bin_freq <- data.table(table(interval_overlap_dt[, bin_id]))
     setnames(
         bin_freq,
         c("V1", "N"),
@@ -87,7 +87,7 @@ Calculate_Freq <- function(interval_overlap_dt) {
 
 
     # calc the n_cells
-    cell_contrib <- big_overlap[, length(unique(cell_name)),
+    cell_contrib <- interval_overlap_dt[, length(unique(cell_name)),
         by = bin_id
     ]
     setnames(
